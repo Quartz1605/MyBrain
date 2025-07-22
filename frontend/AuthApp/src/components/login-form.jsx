@@ -2,8 +2,52 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm({ className, ...props }) {
+
+  const navigate =  useNavigate();
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
+
+  const loginUser = async(e) => {
+    e.preventDefault();
+
+    const body = {
+      email : email,
+      password : password
+    }
+
+    console.log(body)
+
+    try{
+
+      const response = await axios.post("http://localhost:3000/api/auth/login",body,{
+        headers : {
+          "Content-Type" : "application/json",
+        },
+        withCredentials : true
+      })
+
+      if(response.status === 200){
+        alert(response.data.message)
+        navigate("/home")
+
+      }else{
+        alert(response.data.message)
+      }
+
+    }catch(e){
+
+      alert("Some backend error happened " + e)
+
+    }
+
+  }
+
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -15,7 +59,7 @@ export function LoginForm({ className, ...props }) {
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email" className="text-purple-700">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input id="email" type="email" placeholder="m@example.com" required onChange={(e) => setEmail(e.target.value)}/>
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -27,6 +71,7 @@ export function LoginForm({ className, ...props }) {
             required
             placeholder="*******"
             className="text-xl"
+            onChange={(e) => setPassword(e.target.value)}
           />
           <a
             href="#"
@@ -35,15 +80,15 @@ export function LoginForm({ className, ...props }) {
             Forgot your password?
           </a>
         </div>
-        <Button type="submit" className="w-full bg-purple-500">
+        <Button type="submit" className="w-full bg-purple-500 hover:bg-purple-800" onClick={loginUser}>
           Login
         </Button>
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <Link to="/signup" className="underline underline-offset-4">
           Sign up
-        </a>
+        </Link>
       </div>
     </form>
   );
