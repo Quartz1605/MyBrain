@@ -12,6 +12,8 @@ const AuthRoutes_1 = require("./auth/AuthRoutes");
 const userRoutes_1 = require("./user/userRoutes");
 const linkRoutes_1 = require("./link/linkRoutes");
 const userMiddleware_1 = require("./middlewares/userMiddleware");
+const contentRoutes_1 = require("./content/contentRoutes");
+const tagRoutes_1 = require("./tags/tagRoutes");
 dotenv_1.default.config();
 mongoose_1.default.connect(process.env.MONGO_URI).then(() => { console.log("Connection Successfull"); }).catch((e) => { console.log("Some error happened " + e); });
 const app = (0, express_1.default)();
@@ -30,6 +32,10 @@ app.use("/api/auth", AuthRoutes_1.AuthRoutes);
 app.use("/api/user", userMiddleware_1.UserMiddleware, userRoutes_1.userRoutes);
 //Link Routes
 app.use("/api/link", userMiddleware_1.UserMiddleware, linkRoutes_1.LinkRoutes);
+//Content Routes
+app.use("/api/content", userMiddleware_1.UserMiddleware, contentRoutes_1.ContentRoutes);
+//Tag Routes
+app.use("/api/tags", userMiddleware_1.UserMiddleware, tagRoutes_1.TagRoutes);
 app.listen(process.env.PORT, () => {
     console.log(`http://localhost:3000`);
 });

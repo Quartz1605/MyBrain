@@ -7,6 +7,8 @@ import {AuthRoutes}  from "./auth/AuthRoutes"
 import { userRoutes } from "./user/userRoutes"
 import { LinkRoutes } from "./link/linkRoutes"
 import { UserMiddleware } from "./middlewares/userMiddleware"
+import { ContentRoutes } from "./content/contentRoutes"
+import { TagRoutes } from "./tags/tagRoutes"
 
 
 dotenv.config()
@@ -39,6 +41,13 @@ app.use("/api/user",UserMiddleware,userRoutes)
 
 //Link Routes
 app.use("/api/link",UserMiddleware,LinkRoutes)
+
+
+//Content Routes
+app.use("/api/content",UserMiddleware,ContentRoutes)
+
+//Tag Routes
+app.use("/api/tags",UserMiddleware,TagRoutes)
 
 
 

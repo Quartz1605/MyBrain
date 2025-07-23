@@ -14,7 +14,7 @@ export function SignupForm({ className, ...props }) {
   const [password,setPassword] = useState("")
   const [firstName,setfirstName] = useState("")
   const [lastName,setlastName] = useState("")
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
 
