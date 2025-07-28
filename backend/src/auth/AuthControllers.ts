@@ -43,7 +43,7 @@ const userSignupController = async(req : Request,res : Response) => {
         sameSite:'none'
       })
 
-      return res.status(201).json({"message" : "User created successfully."})
+      return res.status(201).json({"message" : "User created successfully.", "user" : user})
     }else{
       return res.status(400).json({"message" : "Error creating user."})
     }
@@ -80,7 +80,7 @@ const userLoginController = async(req : Request,res : Response) => {
       sameSite:"none"
     })
 
-    return res.status(200).json({"message" : "Welcome","user" : {"firstName" : user.firstName}})
+    return res.status(200).json({"message" : "Welcome", "user" : user})
 
   }else{
     return res.status(403).json({"message" : "Password is incorrect"})

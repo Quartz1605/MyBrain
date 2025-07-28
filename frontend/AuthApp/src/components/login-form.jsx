@@ -6,12 +6,14 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 
 export function LoginForm({ className, ...props }) {
 
   const navigate =  useNavigate();
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
+  const {setUserInfo} = useAppStore();
 
   const loginUser = async(e) => {
     e.preventDefault();
@@ -34,6 +36,7 @@ export function LoginForm({ className, ...props }) {
 
       if(response.status === 200){
         alert(response.data.message)
+        setUserInfo(response.data.user)
         navigate("/home")
 
       }else{
