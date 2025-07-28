@@ -2,6 +2,7 @@ import { CustomRequest } from "../middlewares/userMiddleware";
 import { Response } from "express";
 import { UserModel } from "../auth/userSchema";
 import { ContentModel } from "./contentSchema";
+import { TagsModel } from "../tags/tagSchema";
 
 
 const setContentController = async(req:CustomRequest,res:Response) => {
@@ -18,11 +19,17 @@ const setContentController = async(req:CustomRequest,res:Response) => {
       return res.status(404).json({"message" : "User doesn't exist"})
     }
 
+    const tag = await TagsModel.findById(req.body.tag)
+
+    if(!tag){
+      return res.status(404).json({"message" : "Tag doesn't exist"})
+    }
+
     const content = await ContentModel.create({
       link : req.body.link,
       type : req.body.type,
       title : req.body.title,
-      tags : req.body.tags,
+      tags : tag._id,
       userId : userExists._id
     })
 
@@ -61,7 +68,7 @@ const getContentController = async(req:CustomRequest,res:Response) => {
       return res.status(403).json({"message" : "Error fetching contents to main page."})
     }
 
-    return res.status(201).json({"contents" : contents})
+    return res.status(200).json({"contents" : contents})
 
   }catch(e : unknown){
 

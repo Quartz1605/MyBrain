@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setContentController = exports.getContentController = void 0;
 const userSchema_1 = require("../auth/userSchema");
 const contentSchema_1 = require("./contentSchema");
+const tagSchema_1 = require("../tags/tagSchema");
 const setContentController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.email;
     try {
@@ -21,11 +22,15 @@ const setContentController = (req, res) => __awaiter(void 0, void 0, void 0, fun
         if (!userExists) {
             return res.status(404).json({ "message": "User doesn't exist" });
         }
+        const tag = yield tagSchema_1.TagsModel.findById(req.body.tag);
+        if (!tag) {
+            return res.status(404).json({ "message": "Tag doesn't exist" });
+        }
         const content = yield contentSchema_1.ContentModel.create({
             link: req.body.link,
             type: req.body.type,
             title: req.body.title,
-            tags: req.body.tags,
+            tags: tag._id,
             userId: userExists._id
         });
         if (!content) {
@@ -51,7 +56,7 @@ const getContentController = (req, res) => __awaiter(void 0, void 0, void 0, fun
         if (!contents) {
             return res.status(403).json({ "message": "Error fetching contents to main page." });
         }
-        return res.status(201).json({ "contents": contents });
+        return res.status(200).json({ "contents": contents });
     }
     catch (e) {
         return res.status(400).json({ "message": "Some backend error happened " + e });

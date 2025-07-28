@@ -23,7 +23,7 @@ export function LoginForm({ className, ...props }) {
       password : password
     }
 
-    console.log(body)
+    
 
     try{
 
