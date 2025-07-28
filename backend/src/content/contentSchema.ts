@@ -22,9 +22,19 @@ const ContentSchema = new Schema({
     required : true
   },
 
+  description : {
+    type : String
+  },
+
+
   tags : [{
     type : ObjectId,
     ref : 'tags'
+  }],
+
+  tagName : [{
+    type : String,
+    required : true
   }],
 
   userId : {

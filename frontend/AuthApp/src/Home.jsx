@@ -125,9 +125,14 @@ export default function Home() {
                   >
                     {item.link}
                   </a>
+                  {item.description && (
+                    <div className="text-black text-sm mt-1 mb-1 line-clamp-3">
+                      {item.description}
+                    </div>
+                  )}
                   {item.tags && item.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {item.tags.map((tag, idx) => (
+                      {item.tagName.map((tag, idx) => (
                         <span
                           key={tag + idx}
                           className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-xs"

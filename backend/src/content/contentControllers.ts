@@ -30,7 +30,9 @@ const setContentController = async(req:CustomRequest,res:Response) => {
       type : req.body.type,
       title : req.body.title,
       tags : tag._id,
-      userId : userExists._id
+      tagName : tag.title,
+      userId : userExists._id,
+      description : req.body.description
     })
 
     if(!content){

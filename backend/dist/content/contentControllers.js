@@ -31,7 +31,9 @@ const setContentController = (req, res) => __awaiter(void 0, void 0, void 0, fun
             type: req.body.type,
             title: req.body.title,
             tags: tag._id,
-            userId: userExists._id
+            tagName: tag.title,
+            userId: userExists._id,
+            description: req.body.description
         });
         if (!content) {
             return res.status(403).json({ "message": "Error adding link to brain" });
