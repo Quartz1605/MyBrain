@@ -69,7 +69,9 @@ const getContentController = async(req:CustomRequest,res:Response) => {
       return res.status(404).json({"message" : "User doesn't exist"})
     }
 
-    const contents = await ContentModel.find({})
+    const contents = await ContentModel.find({
+      userId : userExists._id
+    })
 
     if(!contents){
       return res.status(403).json({"message" : "Error fetching contents to main page."})
