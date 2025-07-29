@@ -6,75 +6,74 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useEffect,useState } from "react";
-import { useAppStore } from "./store";
+import { DialogDemo } from "./Dialog";
+
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
-
 
 export default function Home() {
 
-  const { userInfo, setUserInfo } = useAppStore();
+  const [ userInfo, setUserInfo ] = useState("")
 
-  const [contents,setContents] = useState(null);
+  const [contents, setContents] = useState(null);
 
-  const getAllLinks = async() => {
+  const navigate =  useNavigate();
 
-    try{
+  const getAllLinks = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/content/get-all-links",
+        { withCredentials: true }
+      );
 
-      const response = await axios.get("http://localhost:3000/api/content/get-all-links",{withCredentials : true})
-
-      
-
-      if(response.status === 200){
-        
-        console.log(response.data.contents)
-        setContents(response.data.contents)
-        
-
-      }else{
-
-        alert(response.data.message)
-      
+      if (response.status === 200) {
+        console.log(response.data.contents);
+        setContents(response.data.contents);
+      } else {
+        alert(response.data.message);
       }
+    } catch (e) {
+      alert("Some backend error happened " + e);
+    }
+  };
 
-    }catch(e){
+  const getUserInfo = async () => {
 
-      alert("Some backend error happened " +  e)
-      
+    const response = await axios.get("http://localhost:3000/api/user-info",{withCredentials : true})
+
+    console.log(response.data.firstName)
+
+    if(response.status === 404){
+
+      setUserInfo("Pls login !")
+      navigate("/login")
+
+    }
+
+    if(response.status === 200){
+      setUserInfo(response.data.firstName)
     }
 
   }
 
-
   useEffect(() => {
     getAllLinks();
-  }, [])
+    getUserInfo();
+  }, []);
 
-  
-
-  
   useEffect(() => {
-    
     const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
 
-    
     return () => {
       document.head.removeChild(link);
     };
-
-    
-
-
   }, []);
 
-  
-
-  
-  
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -92,20 +91,26 @@ export default function Home() {
             </div>
             <span
               className="text-2xl font-bold text-purple-600 quirky-font animate-bounce text-center"
-              style={{ fontFamily: 'Indie Flower, cursive', letterSpacing: '1px' }}
+              style={{
+                fontFamily: "Indie Flower, cursive",
+                letterSpacing: "1px",
+              }}
             >
               Got a Link, Save it Here!
             </span>
-            {userInfo?.firstName && (
-              <div className="absolute right-0 flex items-center gap-2">
+            {userInfo && (
+              <div className="absolute right-0 flex items-center gap-6">
+                <DialogDemo />
                 <span className="text-purple-600 font-semibold text-lg tracking-wide mr-2">
-                  {`Hi, ${userInfo.firstName}!`}
+                  {`Hi, ${userInfo}!`}
                 </span>
               </div>
             )}
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
+          
+          
           <div className="grid auto-rows-min gap-6 md:grid-cols-3">
             {Array.isArray(contents) && contents.length > 0 ? (
               contents.map((item) => (
@@ -114,8 +119,12 @@ export default function Home() {
                   className="rounded-xl shadow-lg bg-white border border-purple-100 p-5 flex flex-col gap-2 hover:shadow-2xl transition-shadow duration-200"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg font-bold text-purple-700 truncate max-w-[70%]">{item.title}</span>
-                    <span className="ml-auto px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-700 uppercase">{item.type}</span>
+                    <span className="text-lg font-bold text-purple-700 truncate max-w-[70%]">
+                      {item.title}
+                    </span>
+                    <span className="ml-auto px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-700 uppercase">
+                      {item.type}
+                    </span>
                   </div>
                   <a
                     href={item.link}

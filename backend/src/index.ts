@@ -1,4 +1,6 @@
 import express,{Request,Response} from "express"
+import { CustomRequest } from "./middlewares/userMiddleware"
+import { UserModel } from "./auth/userSchema"
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 import cors from "cors"
@@ -48,6 +50,23 @@ app.use("/api/content",UserMiddleware,ContentRoutes)
 
 //Tag Routes
 app.use("/api/tags",UserMiddleware,TagRoutes)
+
+app.get("/api/user-info",UserMiddleware,async(req : CustomRequest,res : Response) => {
+
+  const email : string | undefined = req.email
+
+  const user = await UserModel.findOne({
+    "email" : email
+  })
+
+  if(!user){
+
+    return res.status(404).json({"message" : "User not found"})
+  }
+
+  return res.status(200).json({"firstName" : user.firstName})
+
+}) 
 
 
 

@@ -19,21 +19,26 @@ const setContentController = async(req:CustomRequest,res:Response) => {
       return res.status(404).json({"message" : "User doesn't exist"})
     }
 
-    const tag = await TagsModel.findById(req.body.tag)
+    
+    const selectedTagIds = Array.isArray(req.body.selectedTags) ? req.body.selectedTags : [req.body.selectedTags];
+    const tags = await TagsModel.find({ _id: { $in: selectedTagIds } });
 
-    if(!tag){
-      return res.status(404).json({"message" : "Tag doesn't exist"})
+    if (!tags || tags.length === 0) {
+      return res.status(404).json({ "message": "Tag(s) don't exist" });
     }
 
+    const tagIds = tags.map(tag => tag._id);
+    const tagNames = tags.map(tag => tag.title);
+
     const content = await ContentModel.create({
-      link : req.body.link,
-      type : req.body.type,
-      title : req.body.title,
-      tags : tag._id,
-      tagName : tag.title,
-      userId : userExists._id,
-      description : req.body.description
-    })
+      link: req.body.link,
+      type: req.body.type,
+      title: req.body.title,
+      tags: tagIds,
+      tagName: tagNames,
+      userId: userExists._id,
+      description: req.body.description
+    });
 
     if(!content){
       return res.status(403).json({"message" : "Error adding link to brain"})

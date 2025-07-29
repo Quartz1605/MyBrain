@@ -22,16 +22,19 @@ const setContentController = (req, res) => __awaiter(void 0, void 0, void 0, fun
         if (!userExists) {
             return res.status(404).json({ "message": "User doesn't exist" });
         }
-        const tag = yield tagSchema_1.TagsModel.findById(req.body.tag);
-        if (!tag) {
-            return res.status(404).json({ "message": "Tag doesn't exist" });
+        const selectedTagIds = Array.isArray(req.body.selectedTags) ? req.body.selectedTags : [req.body.selectedTags];
+        const tags = yield tagSchema_1.TagsModel.find({ _id: { $in: selectedTagIds } });
+        if (!tags || tags.length === 0) {
+            return res.status(404).json({ "message": "Tag(s) don't exist" });
         }
+        const tagIds = tags.map(tag => tag._id);
+        const tagNames = tags.map(tag => tag.title);
         const content = yield contentSchema_1.ContentModel.create({
             link: req.body.link,
             type: req.body.type,
             title: req.body.title,
-            tags: tag._id,
-            tagName: tag.title,
+            tags: tagIds,
+            tagName: tagNames,
             userId: userExists._id,
             description: req.body.description
         });
