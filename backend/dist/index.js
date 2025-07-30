@@ -43,7 +43,7 @@ app.use("/api/user", userMiddleware_1.UserMiddleware, userRoutes_1.userRoutes);
 //Link Routes
 app.use("/api/link", userMiddleware_1.UserMiddleware, linkRoutes_1.LinkRoutes);
 //Content Routes
-app.use("/api/content", userMiddleware_1.UserMiddleware, contentRoutes_1.ContentRoutes);
+app.use("/api/content", contentRoutes_1.ContentRoutes);
 //Tag Routes
 app.use("/api/tags", userMiddleware_1.UserMiddleware, tagRoutes_1.TagRoutes);
 app.get("/api/user-info", userMiddleware_1.UserMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

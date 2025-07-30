@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setContentController = exports.getContentController = void 0;
+exports.shareLinkController = exports.setContentController = exports.getContentController = void 0;
 const userSchema_1 = require("../auth/userSchema");
 const contentSchema_1 = require("./contentSchema");
 const tagSchema_1 = require("../tags/tagSchema");
@@ -70,3 +70,28 @@ const getContentController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getContentController = getContentController;
+const shareLinkController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.params.id;
+        const user = yield userSchema_1.UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ "message": "User does not exist." });
+        }
+        if (!userId) {
+            return res.status(403).json({ "message": "User not found" });
+        }
+        const content = yield contentSchema_1.ContentModel.find({
+            "userId": userId
+        });
+        if (!content) {
+            return res.status(404).json({ "message": "No links for the current user." });
+        }
+        else {
+            return res.status(200).json({ "content": content, "firstName": user.firstName });
+        }
+    }
+    catch (e) {
+        return res.status(404).json({ "message": "Some backend error happened " + e });
+    }
+});
+exports.shareLinkController = shareLinkController;

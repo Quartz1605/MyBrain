@@ -33,14 +33,14 @@ const getLinkController = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 "userId": user._id
             });
             if (link) {
-                return res.status(201).json({ "message": "Link created successfully", "link": link.link });
+                return res.status(201).json({ "message": "Link created successfully", "link": `http://localhost:5173/user/${link.link}` });
             }
             else {
                 return res.status(400).json({ "message": "Error creating link." });
             }
         }
         else {
-            return res.status(200).json({ "link": linkExists.link });
+            return res.status(200).json({ "link": `http://localhost:5173/user/${linkExists.link}` });
         }
     }
     catch (e) {

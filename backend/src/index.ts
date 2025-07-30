@@ -46,7 +46,7 @@ app.use("/api/link",UserMiddleware,LinkRoutes)
 
 
 //Content Routes
-app.use("/api/content",UserMiddleware,ContentRoutes)
+app.use("/api/content",ContentRoutes)
 
 //Tag Routes
 app.use("/api/tags",UserMiddleware,TagRoutes)

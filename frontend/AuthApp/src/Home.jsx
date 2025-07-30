@@ -25,17 +25,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { DialogDemo } from "./Dialog";
+import { DialogDemo } from "./DialogLinkCreation";
+import { DialogProfileLink } from "./DialogProfileLink";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Home = () => {
-
   const [userInfo, setUserInfo] = useState("");
   const [contents, setContents] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDialogProfileLink, setOpenDialogProfileLink] = useState(false);
   const navigate = useNavigate();
 
   const getAllLinks = async () => {
@@ -118,10 +119,12 @@ const Home = () => {
             className="mr-2 data-[orientation=vertical]:h-4"
           />
           <div className="flex flex-1 items-center justify-center gap-8 relative">
-            <div className="flex items-center gap-2 text-2xl absolute left-0">
+            <div className="flex items-center gap-3 text-2xl absolute left-0">
               <BrainCircuit />
               MyBrain
+              <DialogProfileLink />
             </div>
+
             <span
               className="text-2xl font-bold text-purple-600 quirky-font animate-bounce text-center"
               style={{
@@ -137,15 +140,17 @@ const Home = () => {
                 style={{ height: "100%" }}
               >
                 <DialogDemo />
+
                 <DropdownMenu>
                   <DropdownMenuTrigger className="text-purple-600 font-semibold text-md tracking-wide px-3 py-[6px] rounded-lg bg-white shadow hover:bg-purple-50 border border-purple-200 transition-all duration-150">{`Hi, ${userInfo}!`}</DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-purple-700 hover:text-purple-700">
-                      Share your Brain
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-purple-700 hover:text-purple-700" onSelect={() => setOpenDialog(true)}>
+                    <DropdownMenuItem className="text-purple-700 hover:text-purple-700"></DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-purple-700 hover:text-purple-700"
+                      onSelect={() => setOpenDialog(true)}
+                    >
                       Logout
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -157,12 +162,20 @@ const Home = () => {
                         Are you absolutely sure?
                       </AlertDialogTitle>
                       <AlertDialogDescription>
-                        This Action will Logout you, you will have to Login again.
+                        This Action will Logout you, you will have to Login
+                        again.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel className="text-purple-700 bg-white hover:bg-gray-200 hover:text-purple-700">Cancel</AlertDialogCancel>
-                      <AlertDialogAction className="text-purple-700 bg-white hover:bg-gray-200 border-1 border-gray-200" onClick={logoutUser}>Continue</AlertDialogAction>
+                      <AlertDialogCancel className="text-purple-700 bg-white hover:bg-gray-200 hover:text-purple-700">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        className="text-purple-700 bg-white hover:bg-gray-200 border-1 border-gray-200"
+                        onClick={logoutUser}
+                      >
+                        Continue
+                      </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
@@ -223,7 +236,6 @@ const Home = () => {
       </SidebarInset>
     </SidebarProvider>
   );
+};
 
-}
-
-export default Home
+export default Home;

@@ -1,8 +1,9 @@
 import { CustomRequest } from "../middlewares/userMiddleware";
-import { Response } from "express";
+import { Request,Response } from "express";
 import { UserModel } from "../auth/userSchema";
 import { ContentModel } from "./contentSchema";
 import { TagsModel } from "../tags/tagSchema";
+
 
 
 const setContentController = async(req:CustomRequest,res:Response) => {
@@ -87,6 +88,39 @@ const getContentController = async(req:CustomRequest,res:Response) => {
 
 }
 
+const shareLinkController = async(req: Request,res:Response) => {
 
-export {getContentController,setContentController}
+  try{
+
+    const userId : String | undefined =  req.params.id;
+
+    const user = await UserModel.findById(userId)
+
+    if(!user){
+      return res.status(404).json({"message" : "User does not exist."})
+    }
+    
+
+    if(!userId){
+      return res.status(403).json({"message" : "User not found"})
+    }
+
+    const content = await ContentModel.find({
+      "userId" : userId
+    })
+
+    if(!content){
+      return res.status(404).json({"message" : "No links for the current user."})
+    }else{
+      return res.status(200).json({"content" : content,"firstName" : user.firstName})
+    }
+  }catch(e){
+    return res.status(404).json({"message" : "Some backend error happened " + e})
+  }
+
+  
+}
+
+
+export {getContentController,setContentController,shareLinkController}
 
