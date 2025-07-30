@@ -6,19 +6,37 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { DialogDemo } from "./Dialog";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function Home() {
+const Home = () => {
 
-  const [ userInfo, setUserInfo ] = useState("")
-
+  const [userInfo, setUserInfo] = useState("");
   const [contents, setContents] = useState(null);
-
-  const navigate =  useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const navigate = useNavigate();
 
   const getAllLinks = async () => {
     try {
@@ -39,23 +57,21 @@ export default function Home() {
   };
 
   const getUserInfo = async () => {
+    const response = await axios.get("http://localhost:3000/api/user-info", {
+      withCredentials: true,
+    });
 
-    const response = await axios.get("http://localhost:3000/api/user-info",{withCredentials : true})
+    console.log(response.data.firstName);
 
-    console.log(response.data.firstName)
-
-    if(response.status === 404){
-
-      setUserInfo("Pls login !")
-      navigate("/login")
-
+    if (response.status === 404) {
+      setUserInfo("Pls login !");
+      navigate("/login");
     }
 
-    if(response.status === 200){
-      setUserInfo(response.data.firstName)
+    if (response.status === 200) {
+      setUserInfo(response.data.firstName);
     }
-
-  }
+  };
 
   useEffect(() => {
     getAllLinks();
@@ -73,6 +89,23 @@ export default function Home() {
       document.head.removeChild(link);
     };
   }, []);
+
+  const logoutUser = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/logout",
+        {},
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        navigate("/login");
+      }
+    } catch (e) {
+      console.log(e);
+      alert("Some backend error happened " + e);
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -99,18 +132,45 @@ export default function Home() {
               Got a Link, Save it Here!
             </span>
             {userInfo && (
-              <div className="absolute right-0 flex items-center gap-6">
+              <div
+                className="absolute right-0 top-1 flex items-center gap-3"
+                style={{ height: "100%" }}
+              >
                 <DialogDemo />
-                <span className="text-purple-600 font-semibold text-lg tracking-wide mr-2">
-                  {`Hi, ${userInfo}!`}
-                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="text-purple-600 font-semibold text-md tracking-wide px-3 py-[6px] rounded-lg bg-white shadow hover:bg-purple-50 border border-purple-200 transition-all duration-150">{`Hi, ${userInfo}!`}</DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-purple-700 hover:text-purple-700">
+                      Share your Brain
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="text-purple-700 hover:text-purple-700" onSelect={() => setOpenDialog(true)}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-purple-700">
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This Action will Logout you, you will have to Login again.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="text-purple-700 bg-white hover:bg-gray-200 hover:text-purple-700">Cancel</AlertDialogCancel>
+                      <AlertDialogAction className="text-purple-700 bg-white hover:bg-gray-200 border-1 border-gray-200" onClick={logoutUser}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )}
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          
-          
           <div className="grid auto-rows-min gap-6 md:grid-cols-3">
             {Array.isArray(contents) && contents.length > 0 ? (
               contents.map((item) => (
@@ -163,4 +223,7 @@ export default function Home() {
       </SidebarInset>
     </SidebarProvider>
   );
+
 }
+
+export default Home

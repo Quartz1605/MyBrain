@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SelectDemo } from "./components/selectUse"
+import { toast } from "sonner";
 
 export function DialogDemo() {
 
@@ -31,59 +32,66 @@ export function DialogDemo() {
         : [...prev, tagId]
     );
   };
-  
-  const getTags =  async() => {
 
-    try{
-
-      const response = await axios.get("http://localhost:3000/api/tags/get-all-tags",{
-        withCredentials : true
-      })
-
-      if(response.status === 200){
-
-        console.log(response.data.tags)
-        setTags(response.data.tags)
-
-      }else{
-        alert("Error fetching tags.")
-      }
-    }catch(e){
-      alert("Some backend Error happened.. " + e)
+  const validateLinkCreation = () => {
+    if (!title.trim()) {
+      toast.error("Title is required!");
+      return false;
     }
-
+    if (!link.trim()) {
+      toast.error("Link is required!");
+      return false;
+    }
+    if (!description.trim()) {
+      toast.error("Description is required!");
+      return false;
+    }
+    if (!type.trim()) {
+      toast.error("Type is required!");
+      return false;
+    }
+    if (selectedTags.length === 0) {
+      toast.error("At least one tag must be selected!");
+      return false;
+    }
+    return true;
   }
+  
+  const getTags = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/tags/get-all-tags", {
+        withCredentials: true
+      });
+      if (response.status === 200) {
+        setTags(response.data.tags);
+      } else {
+        toast.error("Error fetching tags.");
+      }
+    } catch (e) {
+      toast.error("Some backend Error happened.. " + e);
+    }
+  };
 
   useEffect(() => {
     getTags();
   },[])
 
   
-  const onSubmit = async(e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-
-    const body = {link,description,type,title,selectedTags}
-    console.log(body)
-
-    try{
-
-    const response = await axios.post("http://localhost:3000/api/content/create-link",body,{withCredentials:true})
-
-    if(response.status === 201){
-      alert("Created Link !")
-    }else{
-
-      alert(response.data.message)
-
+    if (!validateLinkCreation()) return;
+    const body = { link, description, type, title, selectedTags };
+    try {
+      const response = await axios.post("http://localhost:3000/api/content/create-link", body, { withCredentials: true });
+      if (response.status === 201) {
+        toast.success("Link created successfully!");
+      } else {
+        toast.error(response.data.message || "Error creating link.");
+      }
+    } catch (e) {
+      toast.error("Some error happened " + e);
     }
-
-    }catch(e){
-      alert("Some error happened " + e)
-    }
-
-
-
-  }
+  };
 
   
 
@@ -93,7 +101,7 @@ export function DialogDemo() {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button variant="outline" className="bg-white text-purple-700 hover:bg-purple-400 border-2 border-gray-200 hover:cursor-pointer">Add a Link</Button>
+          <Button variant="outline" className="bg-white text-purple-700 hover:bg-gray-100 hover:text-purple-700 border-2 border-gray-200 hover:cursor-pointer">Add a Link</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

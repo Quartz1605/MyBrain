@@ -2,6 +2,7 @@ import { UserModel } from "./userSchema";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import { Request,Response } from "express";
+import { CustomRequest } from "../middlewares/userMiddleware";
 
 const maxAge : number = 20*24*60*60*100;
 
@@ -88,4 +89,12 @@ const userLoginController = async(req : Request,res : Response) => {
 
 }
 
-export {userSignupController,userLoginController}
+const userLogoutController =  async(req : CustomRequest,res : Response) => {
+
+  res.clearCookie("jwt")
+  return res.status(200).json({"message" : "Logged out Successfully"})
+
+  
+}
+
+export {userSignupController,userLoginController,userLogoutController}
