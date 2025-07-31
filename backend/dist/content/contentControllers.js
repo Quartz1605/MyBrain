@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.shareLinkController = exports.setContentController = exports.getContentController = void 0;
+exports.deleteContentController = exports.shareLinkController = exports.setContentController = exports.getContentController = void 0;
 const userSchema_1 = require("../auth/userSchema");
 const contentSchema_1 = require("./contentSchema");
 const tagSchema_1 = require("../tags/tagSchema");
@@ -95,3 +95,28 @@ const shareLinkController = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.shareLinkController = shareLinkController;
+const deleteContentController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = req.email;
+    try {
+        const user = yield userSchema_1.UserModel.findOne({
+            "email": email
+        });
+        if (!user) {
+            return res.status(404).json({ "message": "User not found" });
+        }
+        const id = req.params.id;
+        const isDeleted = yield contentSchema_1.ContentModel.deleteOne({
+            "_id": id
+        });
+        if (isDeleted.deletedCount === 1) {
+            return res.status(200).json({ "message": "Content Deleted Successfully." });
+        }
+        else {
+            return res.status(400).json({ "message": "Error deleting the Content." });
+        }
+    }
+    catch (e) {
+        return res.status(400).json({ "message": "Some backend error happened" + e });
+    }
+});
+exports.deleteContentController = deleteContentController;

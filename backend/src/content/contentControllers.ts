@@ -121,6 +121,38 @@ const shareLinkController = async(req: Request,res:Response) => {
   
 }
 
+const deleteContentController = async(req:CustomRequest,res:Response) => {
 
-export {getContentController,setContentController,shareLinkController}
+  const email = req.email
+
+  try{
+
+    const user = await UserModel.findOne({
+      "email" : email
+    })
+
+    if(!user){
+      return res.status(404).json({"message" : "User not found"})
+    }
+
+    const id = req.params.id
+
+    const isDeleted = await ContentModel.deleteOne({
+      "_id" : id
+    })
+
+    if(isDeleted.deletedCount === 1){
+      return res.status(200).json({"message" : "Content Deleted Successfully."})
+    }else{
+      return res.status(400).json({"message" : "Error deleting the Content."})
+    }
+  }catch(e){
+    return res.status(400).json({"message" : "Some backend error happened" + e})
+  }
+
+
+}
+
+
+export {getContentController,setContentController,shareLinkController,deleteContentController}
 

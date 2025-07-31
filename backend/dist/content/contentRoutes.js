@@ -9,3 +9,4 @@ exports.ContentRoutes = ContentRoutes;
 ContentRoutes.post("/create-link", userMiddleware_1.UserMiddleware, contentControllers_1.setContentController);
 ContentRoutes.get("/get-all-links", userMiddleware_1.UserMiddleware, contentControllers_1.getContentController);
 ContentRoutes.get("/get-user-links/:id", contentControllers_1.shareLinkController);
+ContentRoutes.get("/delete-link/:id", contentControllers_1.deleteContentController);

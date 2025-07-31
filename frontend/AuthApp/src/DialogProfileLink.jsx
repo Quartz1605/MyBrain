@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner";
 
 
 export function DialogProfileLink() {
@@ -58,6 +59,19 @@ export function DialogProfileLink() {
 
   
 
+  
+  const handleCopy = async (e) => {
+    e.preventDefault();
+    if (link) {
+      try {
+        await navigator.clipboard.writeText(link);
+        toast("Profile link copied to clipboard!");
+      } catch (err) {
+        alert("Failed to copy link");
+      }
+    }
+  };
+
   return (
     <Dialog>
       <form>
@@ -73,15 +87,14 @@ export function DialogProfileLink() {
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              
-              <Input id="name-1" name="name" placeholder="profile-link" value={link} />
+              <Input id="name-1" name="name" placeholder="profile-link" value={link} readOnly />
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit" className="bg-white text-purple-500 border-2 border-gray-200 hover:bg-gray-100 hover:text-purple-500 hover:cursor-pointer" >Copy To Clipboard</Button>
+            <Button type="button" onClick={handleCopy} className="bg-white text-purple-500 border-2 border-gray-200 hover:bg-gray-100 hover:text-purple-500 hover:cursor-pointer" >Copy To Clipboard</Button>
           </DialogFooter>
         </DialogContent>
       </form>

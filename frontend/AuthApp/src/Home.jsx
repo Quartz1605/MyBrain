@@ -1,6 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
-import { BrainCircuit } from "lucide-react";
+import { BrainCircuit, Trash2 } from "lucide-react";
 import {
   SidebarInset,
   SidebarProvider,
@@ -36,8 +36,29 @@ const Home = () => {
   const [userInfo, setUserInfo] = useState("");
   const [contents, setContents] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [openDialogProfileLink, setOpenDialogProfileLink] = useState(false);
+  const [openDialogDeleteId, setOpenDialogDeleteId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const navigate = useNavigate();
+
+  const handleDeleteLink = async (id) => {
+    setDeletingId(id);
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/content/delete-link/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        setContents((prev) => prev.filter((item) => item._id !== id));
+      } else {
+        alert(response.data.message || "Failed to delete link");
+      }
+    } catch (e) {
+      alert("Some backend error happened " + e);
+    }
+    setDeletingId(null);
+  };
 
   const getAllLinks = async () => {
     try {
@@ -189,7 +210,7 @@ const Home = () => {
               contents.map((item) => (
                 <div
                   key={item._id}
-                  className="rounded-xl shadow-lg bg-white border border-purple-100 p-5 flex flex-col gap-2 hover:shadow-2xl transition-shadow duration-200"
+                  className="relative rounded-xl shadow-lg bg-white border border-purple-100 p-5 flex flex-col gap-2 hover:shadow-2xl transition-shadow duration-200"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-lg font-bold text-purple-700 truncate max-w-[70%]">
@@ -224,6 +245,40 @@ const Home = () => {
                       ))}
                     </div>
                   )}
+                  
+                  <div className="flex justify-end mt-2">
+                    <button
+                      className="p-1 rounded-full bg-white shadow"
+                      title="Delete Link"
+                      onClick={() => setOpenDialogDeleteId(item._id)}
+                      disabled={deletingId === item._id}
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
+                  <AlertDialog open={openDialogDeleteId === item._id} onOpenChange={(open) => setOpenDialogDeleteId(open ? item._id : null)}>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-purple-700">
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This Action will Delete your stored link !
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="text-purple-700 bg-white hover:bg-gray-200 hover:text-purple-700">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          className="text-red-700 bg-white hover:bg-gray-200 border-1 border-gray-200 hover:cursor-pointer"
+                          onClick={() => { handleDeleteLink(item._id); setOpenDialogDeleteId(null); }}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               ))
             ) : (
